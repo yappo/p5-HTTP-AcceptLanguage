@@ -1,5 +1,5 @@
 {
-   "abstract" : "Blah blah blah",
+   "abstract" : "Accept-Language header parser and find available language",
    "author" : [
       "Kazuhiro Osawa <yappo {at} shibuya {dot} pl>"
    ],
