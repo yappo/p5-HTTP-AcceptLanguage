@@ -4,7 +4,7 @@ use warnings;
 use 5.008_005;
 our $VERSION = '0.01';
 
-my $LANGUAGE_RANGE = qr/(?:[A-Za-z]{1,8}(?:-[A-Za-z]{1,8})*|\*)/;
+my $LANGUAGE_RANGE = qr/(?:[A-Za-z0-9]{1,8}(?:-[A-Za-z0-9]{1,8})*|\*)/;
 my $QVALUE         = qr/(?:0(?:\.[0-9]{0,3})?|1(?:\.0{0,3})?)/;
 
 sub new {

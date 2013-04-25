@@ -18,13 +18,13 @@ subtest 'empty' => sub {
         is_deeply [ $parser->languages ], [];
     };
     subtest 'language tag error' => sub {
-        my $parser = HTTP::AcceptLanguage->new('23');
+        my $parser = HTTP::AcceptLanguage->new('!!');
         is_deeply [ $parser->languages ], [];
 
-        $parser = HTTP::AcceptLanguage->new('en-23');
+        $parser = HTTP::AcceptLanguage->new('en-!^');
         is_deeply [ $parser->languages ], [];
 
-        $parser = HTTP::AcceptLanguage->new('12-34');
+        $parser = HTTP::AcceptLanguage->new('&^-~!');
         is_deeply [ $parser->languages ], [];
     };
     subtest 'zero quality' => sub {
@@ -68,6 +68,14 @@ subtest 'loose' => sub {
     my $parser = HTTP::AcceptLanguage->new("en   \t , en;q=1., aaaaaaaaaaaaaaaaa, s.....dd, po;q=asda,
  ja \t   ;  \t   q \t  =  \t  0.3, da;q=1.\t\t\t,  de;q=0.");
     is_deeply [ $parser->languages ], [qw / en da ja /];
+};
+
+subtest 'special tags' => sub {
+    my $parser = HTTP::AcceptLanguage->new('de-1996');
+    is_deeply [ $parser->languages ], [qw / de-1996 /];
+
+    $parser = HTTP::AcceptLanguage->new('luna1918');
+    is_deeply [ $parser->languages ], [qw / luna1918 /];
 };
 
 done_testing;
