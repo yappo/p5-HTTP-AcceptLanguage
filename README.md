@@ -2,30 +2,40 @@
 
 HTTP::AcceptLanguage - Accept-Language header parser and find available language
 
-# SYNOPSIS
+# HOW DO I USE THIS MODULE WITH
+
+## WITH CGI.pm
 
     use HTTP::AcceptLanguage;
+    my $lang = HTTP::AcceptLanguage->new($ENV{HTTP_ACCEPT_LANGUAGE})->match(qw/ en fr es ja zh-tw /);
 
-    my $accept_language = HTTP::AcceptLanguage->new('en, da');
-    $accept_language->match(qw/ da en /); # -> da
-    $accept_language->match(qw/ en da /); # -> en
+## WITH raw PSGI
+
+    use HTTP::AcceptLanguage;
+    my $lang = HTTP::AcceptLanguage->new($env->{HTTP_ACCEPT_LANGUAGE})->match(qw/ en fr es ja zh-tw /);
+
+## WITH Plack::Request
+
+    use HTTP::AcceptLanguage;
+    my $lang = HTTP::AcceptLanguage->new($req->header('Accept-Language'))->match(qw/ en fr es ja zh-tw /);
+
+# SYNOPSIS
+
+Good example of the input and output.
 
     # If language quality is the same then order by match method's input list
     my $accept_language = HTTP::AcceptLanguage->new('en;q=0.5, ja;q=0.1');
     $accept_language->match(qw/ th da ja /); # -> ja
     $accept_language->match(qw/ en ja /);    # -> en
 
+    my $accept_language = HTTP::AcceptLanguage->new('en, da');
+    $accept_language->match(qw/ da en /); # -> da
+    $accept_language->match(qw/ en da /); # -> en
+
+You can obtain the order of preference of the available languages ​​list of client
+
     my $accept_language = HTTP::AcceptLanguage->new('en, ja;q=0.3, da;q=1, *;q=0.29, ch-tw');
     $accept_language->languages; # -> en, da, ch-tw, ja, *
-
-    # create instance for CGI
-    HTTP::AcceptLanguage->new($ENV{HTTP_ACCEPT_LANGUAGE});
-
-    # create instance for raw PSGI
-    HTTP::AcceptLanguage->new($env->{HTTP_ACCEPT_LANGUAGE});
-
-    # create instance for raw Plack::Request
-    HTTP::AcceptLanguage->new($req->header('Accept-Language'));
 
 # DESCRIPTION
 
