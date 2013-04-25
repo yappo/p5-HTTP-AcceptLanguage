@@ -74,7 +74,7 @@ sub match {
 
     unless (scalar(@{ $self->{parsed_header} })) {
         # RFC2616: SHOULD assume that all languages are equally acceptable. If an Accept-Language header is present, then all languages which are assigned a quality factor greater than 0 are acceptable.
-        return $normlized_languages[0];
+        return $normlized_languages[0]->{tag};
     }
 
     $self->{sorted_parsed_header} ||= [ sort { $b->{quality} <=> $a->{quality} } @{ $self->{parsed_header} } ];
@@ -98,7 +98,7 @@ sub match {
         }
 
         # wildcard
-        return $normlized_languages[0] if $language->{language} eq '*';
+        return $normlized_languages[0]->{tag} if $language->{language} eq '*';
 
         $header_tags{$language->{language_lc}}                 = 1;
         $header_primary_tags{$language->{language_primary_lc}} = 1;
