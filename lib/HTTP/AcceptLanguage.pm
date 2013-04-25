@@ -65,7 +65,10 @@ sub languages {
 sub match {
     my($self, @languages) = @_;
     my @normlized_languages = map {
-        $_ ? $_ : ()
+        $_ ? ( +{
+            tag    => $_,
+            tag_lc => lc($_),
+        } ) : ()
     } @languages;
     return undef unless scalar(@normlized_languages);
 
@@ -83,11 +86,12 @@ sub match {
     for my $language (@{ $self->{sorted_parsed_header} }) {
         if ($current_quality != $language->{quality}) {
             if (scalar(%header_tags)) {
+                # RFC give priority to full match.
                 for my $tag (@normlized_languages) {
-                    return $tag if $header_tags{lc $tag};
+                    return $tag->{tag} if $header_tags{$tag->{tag_lc}};
                 }
                 for my $tag (@normlized_languages) {
-                    return $tag if $header_primary_tags{lc $tag};
+                    return $tag->{tag} if $header_primary_tags{$tag->{tag_lc}};
                 }
             }
             $current_quality = $language->{quality};
@@ -100,11 +104,12 @@ sub match {
         $header_primary_tags{$language->{language_primary_lc}} = 1;
     }
     if (scalar(%header_tags)) {
+        # RFC give priority to full match.
         for my $tag (@normlized_languages) {
-            return $tag if $header_tags{lc $tag};
+            return $tag->{tag} if $header_tags{$tag->{tag_lc}};
         }
         for my $tag (@normlized_languages) {
-            return $tag if $header_primary_tags{lc $tag};
+            return $tag->{tag} if $header_primary_tags{$tag->{tag_lc}};
         }
     }
 
