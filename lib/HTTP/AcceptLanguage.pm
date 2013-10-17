@@ -88,18 +88,23 @@ sub match {
     # If you set $MATCH_PRIORITY_0_01_STYLE=1, takes is a priority order of the @languages
     my %header_tags;
     my %header_primary_tags;
+    my $detect_langguage = sub {
+        if (scalar(%header_tags)) {
+            # RFC give priority to full match.
+            for my $tag (@normlized_languages) {
+                return $tag->{tag} if $header_tags{$tag->{tag_lc}};
+            }
+            for my $tag (@normlized_languages) {
+                return $tag->{tag} if $header_primary_tags{$tag->{tag_lc}};
+            }
+        }
+    };
+
     my $current_quality = 0;
     for my $language (@{ $self->{sorted_parsed_header} }) {
         if (!$MATCH_PRIORITY_0_01_STYLE || $current_quality != $language->{quality}) {
-            if (scalar(%header_tags)) {
-                # RFC give priority to full match.
-                for my $tag (@normlized_languages) {
-                    return $tag->{tag} if $header_tags{$tag->{tag_lc}};
-                }
-                for my $tag (@normlized_languages) {
-                    return $tag->{tag} if $header_primary_tags{$tag->{tag_lc}};
-                }
-            }
+            my $ret = $detect_langguage->();
+            return $ret if $ret;
             $current_quality = $language->{quality};
         }
 
@@ -109,15 +114,8 @@ sub match {
         $header_tags{$language->{language_lc}}                 = 1;
         $header_primary_tags{$language->{language_primary_lc}} = 1;
     }
-    if (scalar(%header_tags)) {
-        # RFC give priority to full match.
-        for my $tag (@normlized_languages) {
-            return $tag->{tag} if $header_tags{$tag->{tag_lc}};
-        }
-        for my $tag (@normlized_languages) {
-            return $tag->{tag} if $header_primary_tags{$tag->{tag_lc}};
-        }
-    }
+    my $ret = $detect_langguage->();
+    return $ret if $ret;
 
     return undef; # not matched
 }
