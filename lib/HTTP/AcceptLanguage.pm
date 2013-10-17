@@ -58,6 +58,7 @@ sub _parse {
 sub languages {
     my $self = shift;
     $self->{languages} ||= do {
+        use sort 'stable';
         my @languages = map { $_->{language} } sort { $b->{quality} <=> $a->{quality} } @{ $self->{parsed_header} };
         \@languages;
     };
