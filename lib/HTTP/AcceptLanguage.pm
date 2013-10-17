@@ -178,13 +178,21 @@ Good example of the input and output.
   $accept_language->match(qw/ en ja /);    # -> en
 
   my $accept_language = HTTP::AcceptLanguage->new('en, da');
-  $accept_language->match(qw/ da en /); # -> da
+  $accept_language->match(qw/ da en /); # -> en
   $accept_language->match(qw/ en da /); # -> en
 
 You can obtain the order of preference of the available languages ​​list of client
 
   my $accept_language = HTTP::AcceptLanguage->new('en, ja;q=0.3, da;q=1, *;q=0.29, ch-tw');
   $accept_language->languages; # -> en, da, ch-tw, ja, *
+
+You can use the 0.01 version spec. (next version is deplicated)
+
+  local $HTTP::AcceptLanguage::MATCH_PRIORITY_0_01_STYLE = 1;
+  
+  my $accept_language = HTTP::AcceptLanguage->new('en, da');
+  $accept_language->match(qw/ da en /); # -> da
+  $accept_language->match(qw/ en da /); # -> en
 
 =head1 DESCRIPTION
 
@@ -200,7 +208,7 @@ It to specify a string of Accept-Language header.
 
 By your available language list, returns the most optimal language.
 
-If language quality is the same, the order of the input list takes precedence.
+If language-quality has the same value, is a priority order of the new($ENV{HTTP_ACCEPT_LANGUAGE}).
 
 =head2 languages
 
