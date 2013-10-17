@@ -4,6 +4,10 @@ use Test::More;
 
 use HTTP::AcceptLanguage;
 
+# This test case checks 0.01 compatibility mode.
+# Test case is taken from version 0.01 test suite.
+local $HTTP::AcceptLanguage::MATCH_PRIORITY_0_01_STYLE = 1;
+
 subtest 'empty' => sub {
     subtest 'undef' => sub {
         my $parser = HTTP::AcceptLanguage->new;
