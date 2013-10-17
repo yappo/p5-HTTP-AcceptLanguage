@@ -79,7 +79,10 @@ sub match {
         return $normlized_languages[0]->{tag};
     }
 
-    $self->{sorted_parsed_header} ||= [ sort { $b->{quality} <=> $a->{quality} } @{ $self->{parsed_header} } ];
+    $self->{sorted_parsed_header} ||= do {
+        use sort 'stable';
+        [ sort { $b->{quality} <=> $a->{quality} } @{ $self->{parsed_header} } ];
+    };
 
     # If language-quality has the same value, is a priority order of the $self->{sorted_parsed_header}.
     # If you set $MATCH_PRIORITY_0_01_STYLE=1, takes is a priority order of the @languages
