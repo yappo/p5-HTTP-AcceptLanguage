@@ -86,36 +86,57 @@ sub match {
 
     # If language-quality has the same value, is a priority order of the $self->{sorted_parsed_header}.
     # If you set $MATCH_PRIORITY_0_01_STYLE=1, takes is a priority order of the @languages
-    my %header_tags;
-    my %header_primary_tags;
-    my $detect_langguage = sub {
-        if (scalar(%header_tags)) {
+    if ($MATCH_PRIORITY_0_01_STYLE) {
+        my %header_tags;
+        my %header_primary_tags;
+        my $detect_langguage = sub {
+            if (scalar(%header_tags)) {
+                # RFC give priority to full match.
+                for my $tag (@normlized_languages) {
+                    return $tag->{tag} if $header_tags{$tag->{tag_lc}};
+                }
+                for my $tag (@normlized_languages) {
+                    return $tag->{tag} if $header_primary_tags{$tag->{tag_lc}};
+                }
+            }
+        };
+        my $current_quality = 0;
+        for my $language (@{ $self->{sorted_parsed_header} }) {
+            if ($current_quality != $language->{quality}) {
+                # check of the last quality languages
+                my $ret = $detect_langguage->();
+                return $ret if $ret;
+
+                # cleanup
+                $current_quality = $language->{quality};
+                %header_tags         = ();
+                %header_primary_tags = ();
+            }
+
+            # wildcard
+            return $normlized_languages[0]->{tag} if $language->{language} eq '*';
+
+            $header_tags{$language->{language_lc}}                 = 1;
+            $header_primary_tags{$language->{language_primary_lc}} = 1;
+        }
+
+        my $ret = $detect_langguage->();
+        return $ret if $ret;
+    } else {
+        # 0.02 or more
+        for my $language (@{ $self->{sorted_parsed_header} }) {
+            # wildcard
+            return $normlized_languages[0]->{tag} if $language->{language} eq '*';
+
             # RFC give priority to full match.
             for my $tag (@normlized_languages) {
-                return $tag->{tag} if $header_tags{$tag->{tag_lc}};
+                return $tag->{tag} if $language->{language_lc} eq $tag->{tag_lc};
             }
             for my $tag (@normlized_languages) {
-                return $tag->{tag} if $header_primary_tags{$tag->{tag_lc}};
+                return $tag->{tag} if $language->{language_primary_lc} eq $tag->{tag_lc};
             }
         }
-    };
-
-    my $current_quality = 0;
-    for my $language (@{ $self->{sorted_parsed_header} }) {
-        if (!$MATCH_PRIORITY_0_01_STYLE || $current_quality != $language->{quality}) {
-            my $ret = $detect_langguage->();
-            return $ret if $ret;
-            $current_quality = $language->{quality};
-        }
-
-        # wildcard
-        return $normlized_languages[0]->{tag} if $language->{language} eq '*';
-
-        $header_tags{$language->{language_lc}}                 = 1;
-        $header_primary_tags{$language->{language_primary_lc}} = 1;
     }
-    my $ret = $detect_langguage->();
-    return $ret if $ret;
 
     return undef; # not matched
 }
