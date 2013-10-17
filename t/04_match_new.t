@@ -82,6 +82,9 @@ subtest 'prefix tag' => sub {
 
         $parser = HTTP::AcceptLanguage->new('en-us, en');
         is($parser->match(qw/ en-us en /), 'en-us');
+
+        $parser = HTTP::AcceptLanguage->new('en-gb, en-us, en');
+        is($parser->match(qw/ en-us en /), 'en'); # same as en-gb;q=0.9, en-us;q=0.8, en;q=0.7
     };
 
     subtest 'unsupported of server side prefix tag' => sub {
@@ -111,6 +114,10 @@ subtest 'quality' => sub {
 
     $parser = HTTP::AcceptLanguage->new('en;q=0.2, en-us;q=0.1');
     is($parser->match(qw/ en-us ja en /), 'en');
+
+
+    $parser = HTTP::AcceptLanguage->new('th;q=0.1, ja;q=0.1, en-gb;q=0.2, en-us;q=0.2, en;q=0.1');
+    is($parser->match(qw/ en-us ja en /), 'en'); # same as en-gb;q=0.29, en-us;q=0.28, th;q=0.19, ja;q=0.18, en;q=0.17
 
     subtest 'duplicated tag is order by quality' => sub {
         $parser = HTTP::AcceptLanguage->new('ja;q=0.1, en;q=0.5, ja;q=0.6');
