@@ -4,6 +4,8 @@ use warnings;
 use 5.008_005;
 our $VERSION = '0.01';
 
+our $MATCH_PRIORITY_0_01_STYLE;
+
 my $LANGUAGE_RANGE = qr/(?:[A-Za-z0-9]{1,8}(?:-[A-Za-z0-9]{1,8})*|\*)/;
 my $QVALUE         = qr/(?:0(?:\.[0-9]{0,3})?|1(?:\.0{0,3})?)/;
 
@@ -79,12 +81,13 @@ sub match {
 
     $self->{sorted_parsed_header} ||= [ sort { $b->{quality} <=> $a->{quality} } @{ $self->{parsed_header} } ];
 
-    # If language-quality is the same, is a priority order of the @languages
+    # If language-quality has the same value, is a priority order of the $self->{sorted_parsed_header}.
+    # If you set $MATCH_PRIORITY_0_01_STYLE=1, takes is a priority order of the @languages
     my %header_tags;
     my %header_primary_tags;
     my $current_quality = 0;
     for my $language (@{ $self->{sorted_parsed_header} }) {
-        if ($current_quality != $language->{quality}) {
+        if (!$MATCH_PRIORITY_0_01_STYLE || $current_quality != $language->{quality}) {
             if (scalar(%header_tags)) {
                 # RFC give priority to full match.
                 for my $tag (@normlized_languages) {
