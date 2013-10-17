@@ -57,7 +57,7 @@
          "web" : "https://github.com/yappo/p5-HTTP-AcceptLanguage"
       }
    },
-   "version" : "0.01",
+   "version" : "0.02",
    "x_contributors" : [
       "Kazuhiro Osawa <yappo@shibuya.pl>",
       "tokuhirom <tokuhirom@gmail.com>"

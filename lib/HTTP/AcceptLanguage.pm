@@ -2,7 +2,7 @@ package HTTP::AcceptLanguage;
 use strict;
 use warnings;
 use 5.008_005;
-our $VERSION = '0.01';
+our $VERSION = '0.02';
 
 our $MATCH_PRIORITY_0_01_STYLE;
 
