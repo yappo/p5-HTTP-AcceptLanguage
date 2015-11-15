@@ -186,7 +186,7 @@ You can obtain the order of preference of the available languages ​​list of 
   my $accept_language = HTTP::AcceptLanguage->new('en, ja;q=0.3, da;q=1, *;q=0.29, ch-tw');
   $accept_language->languages; # -> en, da, ch-tw, ja, *
 
-You can use the 0.01 version spec. (next version is deplicated)
+You can use the 0.01 version spec. (next version is deprecated)
 
   local $HTTP::AcceptLanguage::MATCH_PRIORITY_0_01_STYLE = 1;
   
