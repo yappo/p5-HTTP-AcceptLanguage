@@ -30,7 +30,7 @@ sub _parse {
     my @elements;
     my %high_qualities;
     for my $element (split /,+/, $header) {
-        my($language, $quality) = $element =~ /\A($LANGUAGE_RANGE)(?:;q=($QVALUE))?\z/;
+        my($language, $quality) = $element =~ /\A($LANGUAGE_RANGE)(?:;[qQ]=($QVALUE))?\z/;
         $quality = 1 unless defined $quality;
         next unless $language && $quality > 0;
 
